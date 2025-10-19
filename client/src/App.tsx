@@ -17,19 +17,19 @@ function App() {
   const [count, setCount] = useState(0);
   const [data, setData] = useState<metricsType | null>(null);
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("http://127.0.0.1:8000/api/v1/metrics");
-      const data = (await response.json()) as metricsType;
-
-      console.log(data);
+    const ws = new WebSocket("ws://127.0.0.1:8000/api/v1/ws/metrics");
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data) as metricsType;
       setData(data);
-      return response;
     };
-    fetchData();
-    const interval = setInterval(() => {
-      fetchData();
-    }, 10000); // fetch data every 10 seconds
-    return () => clearInterval(interval);
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    return () => ws.close();
   }, []);
   return (
     <>
