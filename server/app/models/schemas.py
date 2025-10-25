@@ -2,6 +2,9 @@ from pydantic import BaseModel
 
 class MetricsResponseModel(BaseModel):
     cpu_usage_percent: float
+    cpu_current_mhz: float
+    cpu_min_mhz: float
+    cpu_max_mhz: float
     memory_total_mb: float
     memory_used_mb: float
     memory_free_mb: float
