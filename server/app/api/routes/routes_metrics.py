@@ -24,7 +24,7 @@ async def websocket_metrics(ws: WebSocket):
                 await asyncio.sleep(1)
                 continue
             try:
-                await ws.send_json(metrics.actual_metrics)
+                await ws.send_json({"actual_metrics": metrics.actual_metrics, "metrics_list": metrics.metrics_list})
             except Exception as e:
                 print(f"WebSocket send failed: {e}")
                 break

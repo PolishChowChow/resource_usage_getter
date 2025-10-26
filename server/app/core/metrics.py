@@ -22,8 +22,9 @@ class Metrics:
     actual_metrics = __empty_metrics.copy()
     metrics_list = []
     def __init__(self):
-        for _ in (0, 9):
+        for _ in range(10):
             self.metrics_list.append(self.__empty_metrics.copy())
+            print(self.metrics_list)
     def collect_system_metrics(self):
         cpu_usage_percent = psutil.cpu_percent(interval=None)
         cpu_usage = psutil.cpu_freq(percpu=False)
@@ -67,4 +68,5 @@ async def update_metrics_periodically():
         metrics.invoke_metrics_update()
         print("Metrics updated.")
         print("Current metrics:", metrics.actual_metrics)
+        print("Current metrics:", metrics.metrics_list[9])
         await asyncio.sleep(settings.UPDATE_INTERVAL)

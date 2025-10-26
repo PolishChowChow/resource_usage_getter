@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-type metricsType = {
+interface Metrics {
   cpu_usage_percent: number;
   disk_free_gb: number;
   disk_total_gb: number;
@@ -12,6 +12,20 @@ type metricsType = {
   memory_used_mb: number;
   network_bytes_recv_mb: number;
   network_bytes_sent_mb: number;
+}
+type metricsType = {
+  metrics_list: Array<{
+    cpu_usage_percent: number;
+    disk_free_gb: number;
+    disk_total_gb: number;
+    disk_used_gb: number;
+    memory_free_mb: number;
+    memory_total_mb: number;
+    memory_used_mb: number;
+    network_bytes_recv_mb: number;
+    network_bytes_sent_mb: number;
+  }>;
+  actual_metrics: Metrics;
 };
 function App() {
   const [count, setCount] = useState(0);
@@ -53,7 +67,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <pre>{data?.metrics_list.length}</pre>
     </>
   );
 }
