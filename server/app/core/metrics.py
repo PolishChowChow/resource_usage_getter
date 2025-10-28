@@ -73,5 +73,5 @@ metrics = Metrics()
 
 async def update_metrics_periodically():
     while True:
-        metrics_listed = metrics.collect_system_metrics()
+        metrics.collect_system_metrics()
         await asyncio.sleep(settings.UPDATE_INTERVAL)
