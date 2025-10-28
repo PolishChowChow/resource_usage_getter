@@ -47,13 +47,13 @@ class Metrics:
         )
 
     def get_metrics(self):
-        return {
-            "cpu_usage_percent": self._cpu.metrics_object_notation(),
-            "ram_usage_percent": self._ram.metrics_object_notation(),
-            "disk_usage_percent": self._disk.metrics_object_notation(),
-            "network_sent": self._newtork_sent.metrics_object_notation(),
-            "network_received": self._newtwork_recieved.metrics_object_notation(),
-        }
+        return [
+            self._cpu.metrics_object_notation(),
+            self._ram.metrics_object_notation(),
+            self._disk.metrics_object_notation(),
+            self._newtork_sent.metrics_object_notation(),
+            self._newtwork_recieved.metrics_object_notation()
+        ]
     
     def collect_system_metrics(self):
         cpu_usage = psutil.cpu_freq(percpu=False)
