@@ -1,72 +1,77 @@
 import asyncio
-import psutil
+import psutil # type: ignore
 from app.core.config import settings
 
+class MetricsItem:
+    def __init__(self, name: str, max_consumption: float):
+        self._name = name
+        self._max_consumption = max_consumption
+        self._current_consumption_list = [0.0] * 10
+
+    def update_metrics(self, new_value: float):
+        if len(self._current_consumption_list) >=10:
+            self._current_consumption_list.pop(0)
+        self._current_consumption_list.append(new_value)
+
+    def metrics_object_notation(self):
+        return {
+            "name": self._name,
+            "max_consumption": self._max_consumption,
+            "current_consumption": self._current_consumption_list
+        }
+
 class Metrics:
-    __empty_metrics =  {
-        "cpu_usage_percent": 0.0,
-        "cpu_current_mhz": 0.0,
-        "cpu_min_mhz": 0.0,
-        "cpu_max_mhz": 0.0,
-        "memory_total_mb": 0.0,
-        "memory_used_mb": 0.0,
-        "memory_free_mb": 0.0,
-        "memory_usage_percent": 0.0,
-        "disk_total_gb": 0.0,
-        "disk_used_gb": 0.0,
-        "disk_free_gb": 0.0,
-        "disk_usage_percent": 0.0,
-        "network_bytes_sent_mb": 0.0,
-        "network_bytes_recv_mb": 0.0,
-    }
-    actual_metrics = __empty_metrics.copy()
-    metrics_list = []
     def __init__(self):
-        for _ in range(10):
-            self.metrics_list.append(self.__empty_metrics.copy())
-            print(self.metrics_list)
+        cpu_usage = psutil.cpu_freq(percpu=False)
+        memory = psutil.virtual_memory()
+        disk = psutil.disk_usage(settings.DISK_PATH)
+        self._cpu = MetricsItem(
+            name="CPU",
+            max_consumption=cpu_usage.max
+        )
+        self._ram = MetricsItem(
+            name="RAM",
+            max_consumption=memory.total / (1024 * 1024)
+        )
+        self._disk = MetricsItem(
+            name="Storage",
+            max_consumption=disk.total / (1024 * 1024 * 1024)
+        )
+        self._newtwork_recieved = MetricsItem(
+            name="Network Received",
+            max_consumption=1e12
+        )
+        self._newtork_sent = MetricsItem(
+            name="Network Sent",
+            max_consumption=1e12
+        )
+
+    def get_metrics(self):
+        return {
+            "cpu_usage_percent": self._cpu.metrics_object_notation(),
+            "ram_usage_percent": self._ram.metrics_object_notation(),
+            "disk_usage_percent": self._disk.metrics_object_notation(),
+            "network_sent": self._newtork_sent.metrics_object_notation(),
+            "network_received": self._newtwork_recieved.metrics_object_notation(),
+        }
+    
     def collect_system_metrics(self):
-        cpu_usage_percent = psutil.cpu_percent(interval=None)
         cpu_usage = psutil.cpu_freq(percpu=False)
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage(settings.DISK_PATH)
         network = psutil.net_io_counters()
-        metrics = {
-            "cpu_usage_percent": cpu_usage_percent,
-            "cpu_current_mhz": cpu_usage.current,
-            "cpu_min_mhz": cpu_usage.min,
-            "cpu_max_mhz": cpu_usage.max,
-            "memory_total_mb": memory.total / (1024 * 1024),
-            "memory_used_mb": memory.used / (1024 * 1024),
-            "memory_free_mb": memory.free / (1024 * 1024),
-            "memory_usage_percent": memory.percent,
-            "disk_total_gb": disk.total / (1024 * 1024 * 1024),
-            "disk_used_gb": disk.used / (1024 * 1024 * 1024),
-            "disk_free_gb": disk.free / (1024 * 1024 * 1024),
-            "disk_usage_percent": disk.percent,
-            "network_bytes_sent_mb": network.bytes_sent / (1024 * 1024),
-            "network_bytes_recv_mb": network.bytes_recv / (1024 * 1024),
-        }
-        self.actual_metrics.update(metrics)
-        return metrics
 
-
-    def enque_new_metrics(self, metrics):
-        self.metrics_list.pop(0)
-        self.metrics_list.append(metrics)
-
-    def invoke_metrics_update(self):
-        metrics = self.collect_system_metrics()
-        self.enque_new_metrics(metrics)
-        return metrics
+        self._cpu.update_metrics(cpu_usage.current)
+        self._ram.update_metrics(memory.used / settings.METRICS_SCALE)
+        self._disk.update_metrics(disk.used / settings.METRICS_SCALE)
+        self._newtork_sent.update_metrics(network.bytes_sent / settings.METRICS_SCALE)
+        self._newtwork_recieved.update_metrics(network.bytes_recv / settings.METRICS_SCALE)
+        return self.get_metrics()
+    
 
 metrics = Metrics()
 
 async def update_metrics_periodically():
-    print("Starting periodic metrics update task...")
     while True:
-        metrics.invoke_metrics_update()
-        print("Metrics updated.")
-        print("Current metrics:", metrics.actual_metrics)
-        print("Current metrics:", metrics.metrics_list[9])
+        metrics_listed = metrics.collect_system_metrics()
         await asyncio.sleep(settings.UPDATE_INTERVAL)

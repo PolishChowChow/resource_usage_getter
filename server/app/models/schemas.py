@@ -13,3 +13,11 @@ class MetricsResponseModel(BaseModel):
     disk_free_gb: float
     network_bytes_sent_mb: float
     network_bytes_recv_mb: float
+
+class MetricsListModel(BaseModel):
+    metrics: list[MetricsResponseModel]
+class MetricsModel(BaseModel):
+    current_consumption: list[float]
+    max_consumption: float
+    name: str
+
