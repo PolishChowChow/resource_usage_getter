@@ -1,7 +1,7 @@
 import { ResponsiveLine, type LineSeries } from "@nivo/line";
 import type { Metrics } from "../../../types/Metrics";
 import { dataParser } from "../../../utils/metricsDataParser";
-import { useEffect } from "react";
+
 
 type MetricsLinearChartProps = {
   metrics: Metrics[];
@@ -14,11 +14,11 @@ function MetricsLinearChart({ metrics }: MetricsLinearChartProps) {
     return <div>No data available</div>;
   }
 
-  const parsedData = dataParser(data)[3];
-  return (
-    <div style={{ height: 400, backgroundColor: "#" }}>
+  const parsedData = dataParser(data);
+  const charts = parsedData.map((chart: LineSeries) => (
+    <div key={chart.id} style={{ height: 400, backgroundColor: "#" }}>
       <ResponsiveLine
-        data={[parsedData]}
+        data={[chart]}
         margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
         xScale={{ type: "point" }}
         yScale={{
@@ -28,6 +28,9 @@ function MetricsLinearChart({ metrics }: MetricsLinearChartProps) {
         }}
       />
     </div>
-  );
+  ));
+  return <div>{charts}</div>;
 }
+        
+
 export default MetricsLinearChart;
