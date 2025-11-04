@@ -1,0 +1,82 @@
+body,
+html {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+div#root {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+}
+footer {
+  font-size: 12px;
+  padding: 20px;
+}
+main {
+  flex: 1;
+  width: 90%;
+  display: grid;
+  place-content: center;
+}
+.dashboard {
+  display: flex;
+  padding: 30px;
+}
+.dashboard > div {
+  box-sizing: border-box;
+}
+.metrics-list {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+.metrics-list > div {
+  flex: 1;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+.metrics-list > div:hover {
+  cursor: pointer;
+  background-color: #ddd;
+}
+.metrics-list p {
+  margin-top: 3px;
+  font-size: 10px;
+}
+.metrics-chart {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.metrics-chart > .chart-container {
+  flex: 1;
+}
+.metrics-chart > .additional-info {
+  height: 50px;
+  font-size: 12px;
+}
+@media (max-width: 768px) {
+  main {
+    width: 100%;
+  }
+  .dashboard {
+    flex-direction: column;
+    text-align: center;
+    padding: 0;
+    width: 100%;
+  }
+  .metrics-list {
+    width: 100%;
+    flex-direction: row;
+    padding: 10px;
+  }
+  .metrics-list > div {
+    padding: 10px;
+  }
+  .metrics-chart {
+    width: 100%;
+  }
+}

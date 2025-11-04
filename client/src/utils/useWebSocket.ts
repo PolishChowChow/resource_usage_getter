@@ -14,6 +14,8 @@ export default function useWebSocket<DataType>() {
         setError("Received empty data");
         return;
       }
+      console.log(data);
+      
       setData(data);
     };
     ws.onerror = () => {
@@ -25,5 +27,5 @@ export default function useWebSocket<DataType>() {
 
     return () => ws.close();
   }, []);
-  return [data, error, isConnected] as const;
+  return {data, error, isConnected} as const;
 }

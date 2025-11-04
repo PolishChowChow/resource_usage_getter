@@ -1,15 +1,14 @@
-import type { Metrics } from "./types/Metrics";
-import useWebSocket from "./utils/useWebSocket";
-import MetricsLinearChart from "./components/Metrics/chart/MetricsLinearChart";
+import "../public/styles.css";
+import Header from "./components/sections/Header";
+import Main from "./components/sections/Main";
+import Footer from "./components/sections/Footer";
 
 function App() {
-
-  
-  const [data] = useWebSocket<Metrics[]>();
   return (
     <>
-      <MetricsLinearChart metrics={data || []} />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <Header />
+      <Main />
+      <Footer />
     </>
   );
 }
