@@ -1,7 +1,6 @@
 import asyncio
 import psutil # type: ignore
 from app.core.config import settings
-from math import  ceil
 
 class MetricsItem:
     def __init__(self, name: str, max_consumption: float, additional_info: dict = {}):
@@ -28,11 +27,20 @@ class Metrics:
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage(settings.DISK_PATH)
         cpu = psutil.cpu_freq(percpu=False)
-        self._cpu = MetricsItem(
-            name="CPU",
-            max_consumption=100.0,
-            additional_info={ "current_frequency": f"{round(cpu.current / 1024,2)} GHz", "max_frequency": f"{round(cpu.max / 1024,2)} GHz" }
-        )
+        if cpu is not None:
+            current = round(cpu.current / 1024,2)
+            max = round(cpu.max / 1024,2)
+            self._cpu = MetricsItem(
+                name="CPU",
+                max_consumption=100.0,
+                additional_info={ "current_frequency": f"{current} GHz", "max_frequency": f"{max} GHz" }
+            )
+        else:
+            self._cpu = MetricsItem(
+                name="CPU",
+                max_consumption=100.0,
+            )
+
         self._ram = MetricsItem(
             name="RAM",
             max_consumption=memory.total / settings.METRICS_SCALE,

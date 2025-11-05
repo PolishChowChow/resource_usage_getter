@@ -5,8 +5,11 @@ from asyncio import create_task
 from fastapi.middleware.cors import CORSMiddleware
 
 origins = [
-    "http://localhost",
+    "http://frontend:80",
+    "http://frontend:8080",
     "http://localhost:5173",
+    "http://localhost:8080",
+    "http://localhost:80",
     "http://127.0.0.1:5173"
 ]
 app = FastAPI(title="System Resource Usage API")
