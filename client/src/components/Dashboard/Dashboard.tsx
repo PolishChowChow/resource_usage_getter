@@ -3,6 +3,8 @@ import useWebSocket from "../../utils/useWebSocket";
 import { useEffect, useState } from "react";
 import MetricsList from "../Metrics/MetricsMenu";
 import MetricsChart from "../Metrics/chart/MetricsChart";
+import Page from "../ui/Page";
+import { Card } from "../ui/Card";
 
 export default function Dashboard() {
   const { data } = useWebSocket<Metrics[]>();
@@ -15,9 +17,23 @@ export default function Dashboard() {
     }
   }, []);
   return (
-    <div className="dashboard">
-      {data && <MetricsList metricsList={data} onSelect={setActualDisplayedData} />}
-      {actualDisplayedData && <MetricsChart metrics={actualDisplayedData} />}
-    </div>
+    <Page title="Resource Usage Dashboard">
+      <div className="grid grid-cols-[1fr_2fr] gap-8">
+        <Card title="System Usage">
+          {data && (
+            <MetricsList
+              metricsList={data}
+              onSelect={setActualDisplayedData}
+              actualMetrics={actualDisplayedData}
+            />
+          )}
+        </Card>
+        <Card title="Traffic Chart">
+          {actualDisplayedData && (
+            <MetricsChart metrics={actualDisplayedData} />
+          )}
+        </Card>
+      </div>
+    </Page>
   );
 }

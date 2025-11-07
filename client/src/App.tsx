@@ -1,15 +1,14 @@
-import "../public/styles.css";
 import Header from "./components/sections/Header";
-import Main from "./components/sections/Main";
 import Footer from "./components/sections/Footer";
-
+import Page from "./components/ui/Page";
+import Dashboard from "./components/Dashboard/Dashboard";
 function App() {
   return (
-    <>
+    <Page title={""}>
       <Header />
-      <Main />
+      <Dashboard />
       <Footer />
-    </>
+    </Page>
   );
 }
 

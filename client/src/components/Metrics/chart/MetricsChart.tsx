@@ -32,6 +32,7 @@ export default function MetricsChart({ metrics }: MetricsChartProps) {
           }}
         />
       </div>
+      <hr className="my-8 border-blue-100" />
       {metrics.additional_info && (
         <div className="additional-info">
           {Object.entries(metrics.additional_info).map(([key, value]) => (

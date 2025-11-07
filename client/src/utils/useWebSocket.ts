@@ -6,7 +6,7 @@ export default function useWebSocket<DataType>() {
   const [data, setData] = useState<DataType | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket("/api/v1/ws/metrics");
+    const ws = new WebSocket("ws://127.0.0.1:8000/api/v1/ws/metrics");
     ws.onmessage = (event) => {
       setIsConnected(true);
       const data = JSON.parse(event.data);
@@ -14,10 +14,7 @@ export default function useWebSocket<DataType>() {
         setError("Received empty data");
         return;
       }
-      console.log(data);
-      
       setData(data);
-
     };
     ws.onerror = () => {
       setError("WebSocket error occurred");
@@ -28,5 +25,5 @@ export default function useWebSocket<DataType>() {
 
     return () => ws.close();
   }, []);
-  return {data, error, isConnected} as const;
+  return { data, error, isConnected } as const;
 }
