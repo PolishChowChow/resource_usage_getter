@@ -6,7 +6,7 @@ export default function useWebSocket<DataType>() {
   const [data, setData] = useState<DataType | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8000/api/v1/ws/metrics");
+    const ws = new WebSocket("/api/v1/ws/metrics");
     ws.onmessage = (event) => {
       setIsConnected(true);
       const data = JSON.parse(event.data);
