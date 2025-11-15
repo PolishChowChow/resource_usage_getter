@@ -12,15 +12,19 @@ export default function Dashboard() {
     useState<Metrics | null>(null);
 
   useEffect(() => {
-    if (data && data.length > 0 && !actualDisplayedData) {
-      setActualDisplayedData(data[0]);
+    if (data && data.length > 0) {
+      setActualDisplayedData((prev) => {
+        if (!prev) return data[0]; 
+        const updated = data.find((m) => m.name === prev.name);
+        return updated ? { ...updated } : data[0];
+      });
     }
-  }, []);
+  }, [data]);
   return (
     <Page title="Resource Usage Dashboard">
       <div className="grid grid-cols-[1fr_2fr] gap-8">
         <Card title="System Usage">
-          {data && (
+          {actualDisplayedData && data && (
             <MetricsList
               metricsList={data}
               onSelect={setActualDisplayedData}
